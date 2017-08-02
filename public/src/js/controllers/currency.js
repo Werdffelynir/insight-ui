@@ -18,7 +18,9 @@ angular.module('insight.currency').controller('CurrencyController',
 
         var response;
 
-        if (this.symbol === 'RUB') {
+        if (this.symbol === 'USD') {
+          response = _roundFloat((value * this.usd), 2);
+        } else if (this.symbol === 'RUB') {
           response = _roundFloat((value * this.factor), 2);
         } else if (this.symbol === 'mSIB') {
           this.factor = 1000;
@@ -26,12 +28,12 @@ angular.module('insight.currency').controller('CurrencyController',
         } else if (this.symbol === 'bits') {
           this.factor = 1000000;
           response = _roundFloat((value * this.factor), 2);
-        } else { // assumes symbol is BTC|SIB
+        } else {
           this.factor = 1;
-          response = _roundFloat((value * this.factor), 8);
+          response = value;
         }
         // prevent sci notation
-        if (response < 1e-7) response=response.toFixed(8);
+        if (response < 1e-7) response = response.toFixed(8);
 
         return response + ' ' + this.symbol;
       }
@@ -43,9 +45,11 @@ angular.module('insight.currency').controller('CurrencyController',
       $rootScope.currency.symbol = currency;
       localStorage.setItem('insight-currency', currency);
 
-      if (currency === 'RUB') {
+      if (currency === 'RUB' || currency === 'USD') {
         Currency.get({}, function(res) {
+          // res.data.bitstamp consist fields 'usd' and 'rur', 'rur' qu 'bitstamp'
           $rootScope.currency.factor = $rootScope.currency.bitstamp = res.data.bitstamp;
+          $rootScope.currency.usd = res.data.usd;
         });
       } else if (currency === 'mSIB') {
         $rootScope.currency.factor = 1000;
@@ -58,7 +62,9 @@ angular.module('insight.currency').controller('CurrencyController',
 
     // Get initial value
     Currency.get({}, function(res) {
+      // res.data.bitstamp consist fields 'usd' and 'rur', 'rur' qu 'bitstamp'
       $rootScope.currency.factor = $rootScope.currency.bitstamp = res.data.bitstamp;
+      $rootScope.currency.usd = res.data.usd;
     });
 
   });
