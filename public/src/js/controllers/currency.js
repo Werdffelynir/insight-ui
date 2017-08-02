@@ -19,7 +19,7 @@ angular.module('insight.currency').controller('CurrencyController',
         var response;
 
         if (this.symbol === 'USD') {
-          response = _roundFloat((value * this.usd), 2);
+          response = _roundFloat((value * this.factor) / this.rurusd, 2);
         } else if (this.symbol === 'RUB') {
           response = _roundFloat((value * this.factor), 2);
         } else if (this.symbol === 'mSIB') {
@@ -49,7 +49,7 @@ angular.module('insight.currency').controller('CurrencyController',
         Currency.get({}, function(res) {
           // res.data.bitstamp consist fields 'usd' and 'rur', 'rur' qu 'bitstamp'
           $rootScope.currency.factor = $rootScope.currency.bitstamp = res.data.bitstamp;
-          $rootScope.currency.usd = res.data.usd;
+          $rootScope.currency.rurusd = res.data.rurusd;
         });
       } else if (currency === 'mSIB') {
         $rootScope.currency.factor = 1000;
@@ -64,7 +64,7 @@ angular.module('insight.currency').controller('CurrencyController',
     Currency.get({}, function(res) {
       // res.data.bitstamp consist fields 'usd' and 'rur', 'rur' qu 'bitstamp'
       $rootScope.currency.factor = $rootScope.currency.bitstamp = res.data.bitstamp;
-      $rootScope.currency.usd = res.data.usd;
+      $rootScope.currency.rurusd = res.data.rurusd;
     });
 
   });
